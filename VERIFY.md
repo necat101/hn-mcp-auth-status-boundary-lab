@@ -49,3 +49,15 @@ It does not re-execute the lab; only HEAD/clone-ancestry checks.
 - Equality: MATCH
 - Implementation revision actually execution-tested in a fresh clone: 9cd072e8f6e927a089a77447e08c0770223c05c9 (`python3 evaluator.py` → 8 cases · 6 pass · 2 intentional fail; `python3 -m unittest tests/test_status_boundary.py -v` → 9 tests OK) — see Section 1 transcript above. The documentation commit 58c6d3c itself was not separately execution-tested; only its HEAD/clone presence was verified. GitHub Actions for the new evidence-repair commit 3bcdf04d4186b5b6cd9c62af3453107f4e22dbd2 will be inspected separately (fresh-clone HEAD for that commit appended below after push).
 
+
+---
+
+## Third fresh-clone check — evidence-repair revision 71e86d2 (2026-09-16T18:59Z)
+
+- Public HTTPS origin: https://github.com/necat101/hn-mcp-auth-status-boundary-lab.git
+- Expected published HEAD: 71e86d2f4558ef470a4f1e95d8107f33a522e32b
+- Fresh clone HEAD (unauthenticated HTTPS): 71e86d2f4558ef470a4f1e95d8107f33a522e32b
+- Equality: MATCH
+- Implementation revision actually execution-tested: 9cd072e8f6e927a089a77447e08c0770223c05c9 content (evaluator/fixtures/tests unchanged since that commit; verified in this fresh clone: `python3 evaluator.py` → 8 cases · 6 pass · 2 intentional core-rule fail; `python3 -m unittest tests/test_status_boundary.py -v` → 9 tests OK). The evidence-repair/documentation commits (3bcdf04, 71e86d2) modify only README.md and VERIFY.md and were verified for HEAD/clone presence, not separately counted as a new lab execution revision.
+- Clone command: `git clone https://github.com/necat101/hn-mcp-auth-status-boundary-lab.git /tmp/fresh-final` (public, not file://)
+- Note: 9cd072e remains an ancestor of 71e86d2 (`git log --oneline` shows 9cd072e → 58c6d3c → 3bcdf04 → 71e86d2); evaluator output identical on rerun from fresh clone.
