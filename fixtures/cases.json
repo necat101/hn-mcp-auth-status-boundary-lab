@@ -1,0 +1,196 @@
+[
+  {
+    "id": "http-auth-disabled",
+    "title": "HTTP authorization disabled entirely",
+    "transport": "http",
+    "auth_enabled": false,
+    "request": {
+      "headers": {},
+      "query": "",
+      "resource_url": "https://mcp.example.com/"
+    },
+    "token": null,
+    "description": "Server has authorization disabled. No Authorization header is sent. Tests that core authorization being OPTIONAL means this is conformant.",
+    "governing_layer": "optional-auth",
+    "core_compliance": "pass",
+    "notes": "MCP 2026-07-28 basic/authorization/index.mdx line 18: Authorization is OPTIONAL."
+  },
+  {
+    "id": "valid-bearer-header",
+    "title": "Valid bearer token in Authorization header",
+    "transport": "http",
+    "auth_enabled": true,
+    "request": {
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid"
+      },
+      "query": "",
+      "resource_url": "https://mcp.example.com/mcp",
+      "resource_param": "https://mcp.example.com/mcp"
+    },
+    "token": {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+      "audience": "https://mcp.example.com/mcp",
+      "expired": false,
+      "issuer": "https://auth.example.com"
+    },
+    "description": "Well-formed bearer token in the Authorization header with correct audience (RFC 8707 resource indicator).",
+    "governing_layer": "core",
+    "core_compliance": "pass",
+    "notes": "MUST use Authorization: Bearer per OAuth 2.1 §5.1.1 (lines 262-266); servers MUST validate audience (lines 283-285)."
+  },
+  {
+    "id": "token-in-query-string",
+    "title": "Token placed in the query string",
+    "transport": "http",
+    "auth_enabled": true,
+    "request": {
+      "headers": {},
+      "query": "?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+      "resource_url": "https://mcp.example.com/mcp?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+      "resource_param": "https://mcp.example.com/mcp"
+    },
+    "token": {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+      "audience": "https://mcp.example.com/mcp",
+      "expired": false
+    },
+    "description": "Client places the access token in the URI query string instead of the Authorization header.",
+    "governing_layer": "core",
+    "core_compliance": "fail",
+    "failure_reason": "MUST NOT be in URI query string (line 271)",
+    "notes": "Treating any HTTP auth transport (query-string bearer) as MCP-conformant is the HTTP-native misreading."
+  },
+  {
+    "id": "wrong-audience",
+    "title": "Token for the wrong MCP resource/audience",
+    "transport": "http",
+    "auth_enabled": true,
+    "request": {
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid"
+      },
+      "query": "",
+      "resource_url": "https://mcp.example.com/mcp",
+      "resource_param": "https://mcp.example.com/mcp"
+    },
+    "token": {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+      "audience": "https://other.example.com/mcp",
+      "expired": false,
+      "issuer": "https://auth.example.com"
+    },
+    "description": "Otherwise-syntactically-valid token whose audience/resource indicator points at a different MCP server.",
+    "governing_layer": "core",
+    "core_compliance": "fail",
+    "failure_reason": "MUST validate audience per RFC 8707 (lines 283-285); wrong audience -> 401",
+    "notes": "Audience binding is part of 2026-07-28 core; not optional."
+  },
+  {
+    "id": "valid-without-dpop",
+    "title": "Otherwise-valid baseline authorization without DPoP",
+    "transport": "http",
+    "auth_enabled": true,
+    "request": {
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid"
+      },
+      "query": "",
+      "resource_url": "https://mcp.example.com/mcp",
+      "resource_param": "https://mcp.example.com/mcp",
+      "dpop_proof": null
+    },
+    "token": {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+      "audience": "https://mcp.example.com/mcp",
+      "expired": false
+    },
+    "has_dpop": false,
+    "description": "A fully valid 2026-07-28 bearer exchange with no DPoP proof. Catches the mistake of treating DPoP as a 2026-07-28 core MUST.",
+    "governing_layer": "core",
+    "core_compliance": "pass",
+    "notes": "basic/authorization/index.mdx contains zero references to DPoP/RFC 9449 (grep -c 0). DPoP is roadmap-only."
+  },
+  {
+    "id": "ema-stable-extension",
+    "title": "Optional/stable extension (Enterprise-Managed Authorization / ID-JAG)",
+    "transport": "http",
+    "auth_enabled": true,
+    "request": {
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid"
+      },
+      "query": "",
+      "resource_url": "https://mcp.example.com/mcp",
+      "resource_param": "https://mcp.example.com/mcp"
+    },
+    "token": {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+      "audience": "https://mcp.example.com/mcp",
+      "expired": false
+    },
+    "extension": "enterprise-managed-authorization",
+    "extension_status": "stable",
+    "id_jag_grant": true,
+    "description": "Server uses the Enterprise-Managed Authorization extension (ID-JAG grant). Tests that stable != core requirement.",
+    "governing_layer": "stable-extension",
+    "core_compliance": "pass",
+    "notes": "EMA is a stable extension (roadmap post: now stable), not part of basic/authorization core. Not required for every implementation."
+  },
+  {
+    "id": "dpop-roadmap",
+    "title": "DPoP / workload-identity functionality (roadmap-only)",
+    "transport": "http",
+    "auth_enabled": true,
+    "request": {
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+        "DPoP": "eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2In0.roadmap-proof"
+      },
+      "query": "",
+      "resource_url": "https://mcp.example.com/mcp",
+      "resource_param": "https://mcp.example.com/mcp",
+      "dpop_proof": "eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2In0.roadmap-proof"
+    },
+    "token": {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.valid",
+      "audience": "https://mcp.example.com/mcp",
+      "expired": false
+    },
+    "has_dpop": true,
+    "workload_identity": {
+      "federation": "WIF",
+      "token_exchange": "RFC8693",
+      "status": "roadmap"
+    },
+    "description": "A DPoP-bound request (RFC 9449) and workload-identity federation. Must be classified as roadmap, not 2026-07-28 core.",
+    "governing_layer": "roadmap",
+    "core_compliance": "pass",
+    "notes": "Roadmap posts/mcp-roadmap § Agent identity: Finalize DPoP and focus on adoption; Agent Identity WG (forming). Not a 2026-07-28 MUST."
+  },
+  {
+    "id": "stdio-env-creds",
+    "title": "Stdio credentials handled outside the HTTP authorization flow",
+    "transport": "stdio",
+    "auth_enabled": false,
+    "request": {
+      "headers": {},
+      "query": "",
+      "resource_url": null,
+      "jsonrpc": {
+        "jsonrpc": "2.0",
+        "method": "tools/call",
+        "params": {"name": "read_file", "arguments": {"path": "/tmp/demo.txt"}}
+      }
+    },
+    "token": null,
+    "env_credentials": {
+      "MCP_API_KEY": "sk-env-12345",
+      "source": "environment"
+    },
+    "description": "Stdio transport carrying credentials via environment variables, no HTTP Authorization header. Tests that stdio is not deprecated.",
+    "governing_layer": "out-of-scope-for-http-auth",
+    "core_compliance": "pass",
+    "notes": "basic/authorization line 21: STDIO SHOULD NOT follow this spec; retrieve credentials from the environment. basic/transports/stdio.mdx remains fully specified."
+  }
+]

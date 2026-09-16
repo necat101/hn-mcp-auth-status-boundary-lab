@@ -1,0 +1,89 @@
+{
+  "mcp_spec_version": "2026-07-28",
+  "spec_source": "modelcontextprotocol/modelcontextprotocol@main docs/specification/2026-07-28/basic/authorization/index.mdx",
+  "roadmap_source": "blog.modelcontextprotocol.io/posts/mcp-roadmap/",
+  "dpop_in_core": false,
+  "dpop_status": "roadmap priority (not a 2026-07-28 core MUST)",
+  "workload_identity_status": "roadmap priority (WIF/ID-JAG/RFC8693 via Agent Identity WG forming)",
+  "ema_status": "stable extension (not 2026-07-28 core)",
+  "stdio_status": "NOT deprecated; stdio uses env credentials, SHOULD NOT follow HTTP auth spec",
+  "total": 8,
+  "pass": 6,
+  "fail": 2,
+  "results": [
+    {
+      "case_id": "http-auth-disabled",
+      "governing_layer": "optional-auth",
+      "core_compliance": "pass",
+      "http_auth_applies": false,
+      "reason": "Authorization is OPTIONAL for MCP implementations (2026-07-28 line 18). No 401 required.",
+      "effective_status": 200,
+      "detail": "Auth disabled: conformant without Authorization header."
+    },
+    {
+      "case_id": "valid-bearer-header",
+      "governing_layer": "core",
+      "core_compliance": "pass",
+      "http_auth_applies": true,
+      "reason": "DPoP (RFC 9449) is not referenced by 2026-07-28 basic/authorization (grep 0). Absence does not fail core.",
+      "effective_status": 200,
+      "detail": "Valid bearer + audience without DPoP: core-compliant."
+    },
+    {
+      "case_id": "token-in-query-string",
+      "governing_layer": "core",
+      "core_compliance": "fail",
+      "http_auth_applies": true,
+      "reason": "Access tokens MUST NOT be in URI query string (2026-07-28 line 271) \u2014 RFC 6750 \u00a73.",
+      "effective_status": 401,
+      "detail": "Query-string bearer rejected."
+    },
+    {
+      "case_id": "wrong-audience",
+      "governing_layer": "core",
+      "core_compliance": "fail",
+      "http_auth_applies": true,
+      "reason": "MCP servers MUST validate audience per RFC 8707 (2026-07-28 lines 283-285). Wrong audience -> 401.",
+      "effective_status": 401,
+      "detail": "Audience 'https://other.example.com/mcp' does not match resource 'https://mcp.example.com/mcp'."
+    },
+    {
+      "case_id": "valid-without-dpop",
+      "governing_layer": "core",
+      "core_compliance": "pass",
+      "http_auth_applies": true,
+      "reason": "DPoP (RFC 9449) is not referenced by 2026-07-28 basic/authorization (grep 0). Absence does not fail core.",
+      "effective_status": 200,
+      "detail": "Valid bearer + audience without DPoP: core-compliant."
+    },
+    {
+      "case_id": "ema-stable-extension",
+      "governing_layer": "stable-extension",
+      "core_compliance": "pass",
+      "http_auth_applies": true,
+      "reason": "stable-extension: not a 2026-07-28 core MUST. Core bearer/audience rules still apply independently.",
+      "effective_status": 200,
+      "detail": "stable-extension governs DPoP/EMA identity; absence/presence does not fail core compliance.",
+      "has_dpop": false
+    },
+    {
+      "case_id": "dpop-roadmap",
+      "governing_layer": "roadmap",
+      "core_compliance": "pass",
+      "http_auth_applies": true,
+      "reason": "roadmap: not a 2026-07-28 core MUST. Core bearer/audience rules still apply independently.",
+      "effective_status": 200,
+      "detail": "roadmap governs DPoP/EMA identity; absence/presence does not fail core compliance.",
+      "has_dpop": true
+    },
+    {
+      "case_id": "stdio-env-creds",
+      "governing_layer": "out-of-scope-for-http-auth",
+      "core_compliance": "pass",
+      "http_auth_applies": false,
+      "reason": "STDIO SHOULD NOT follow HTTP authorization spec (2026-07-28 line 21); env credentials are the correct path. Stdio is not deprecated.",
+      "effective_status": 200,
+      "detail": "Stdio: HTTP Authorization flow does not apply."
+    }
+  ]
+}
