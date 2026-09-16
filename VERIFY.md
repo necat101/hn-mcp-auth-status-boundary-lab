@@ -61,3 +61,24 @@ It does not re-execute the lab; only HEAD/clone-ancestry checks.
 - Implementation revision actually execution-tested: 9cd072e8f6e927a089a77447e08c0770223c05c9 content (evaluator/fixtures/tests unchanged since that commit; verified in this fresh clone: `python3 evaluator.py` → 8 cases · 6 pass · 2 intentional core-rule fail; `python3 -m unittest tests/test_status_boundary.py -v` → 9 tests OK). The evidence-repair/documentation commits (3bcdf04, 71e86d2) modify only README.md and VERIFY.md and were verified for HEAD/clone presence, not separately counted as a new lab execution revision.
 - Clone command: `git clone https://github.com/necat101/hn-mcp-auth-status-boundary-lab.git /tmp/fresh-final` (public, not file://)
 - Note: 9cd072e remains an ancestor of 71e86d2 (`git log --oneline` shows 9cd072e → 58c6d3c → 3bcdf04 → 71e86d2); evaluator output identical on rerun from fresh clone.
+
+---
+
+## Fourth fresh-clone check — closure-prep revision cc9e071 (2026-09-16T19:13:46Z) — COMMIT A
+
+This is the closed verification of the closure-prep commit. The evaluator and tests were executed from this fresh clone.
+
+- Public HTTPS origin: https://github.com/necat101/hn-mcp-auth-status-boundary-lab.git (not file://)
+- Expected published HEAD (closure-prep commit A): cc9e071baa4fa77312dd00698df01365c7c42e4c
+- Fresh clone HEAD (unauthenticated HTTPS, `git clone https://github.com/necat101/hn-mcp-auth-status-boundary-lab.git /tmp/fresh-A2`): cc9e071baa4fa77312dd00698df01365c7c42e4c
+- Equality: MATCH
+- Execution in this fresh clone (commit A matched):
+  - `python3 evaluator.py` → 8 cases · 6 pass · 2 intentional core-rule fail (token-in-query-string, wrong-audience are intentional 2026-07-28 rejections, not lab failures)
+  - `python3 -m unittest tests/test_status_boundary.py -v` → 9 tests OK
+- Diff since implementation revision: only README.md (verify.sh wording + result snapshot) and VERIFY.md; evaluator/fixtures/tests unchanged
+- Implementation revision whose lab content is being exercised: 9cd072e8f6e927a089a77447e08c0770223c05c9 (confirmed `git merge-base --is-ancestor 9cd072e HEAD` → true; ancestry: 9cd072e → 58c6d3c → 3bcdf04 → 71e86d2 → 969c876 → cc9e071)
+- Note: This section verifies commit A cc9e071 only. It was created and pushed before this clone. The following commit B merely records this evidence and was not separately fresh-clone matched at the time of this writing; see “Closure-record commit B” below for that distinction.
+
+## Closure-record commit B — records the above evidence
+
+Commit B exists only to record the verified evidence of commit A and does not claim to have been itself fresh-clone matched prior to its creation. Commit A is the revision that was fresh-clone matched and executed; commit B merely documents that result. No separate fresh-clone match for B is required to close the loop.
