@@ -80,9 +80,9 @@ python3 -m unittest tests/test_status_boundary.py -v
 ### Verification
 
 ```sh
-./verify.sh            # fresh public-clone proof (HTTPS + file:// comparison)
+./verify.sh            # local deterministic evaluator/test check
 cat RESULTS.md         # recorded actual output
-cat VERIFY.md          # clone transcript
+cat VERIFY.md          # public HTTPS fresh-clone transcript (see VERIFY.md for the public-origin procedure)
 ```
 
 ## Quick start
