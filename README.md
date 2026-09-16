@@ -36,9 +36,9 @@ Quoted text is abbreviated; IDs and authors are exact so you can re-fetch `https
 | 1 | “With the 2026-07-28 release, a remote MCP server is now no different from any other HTTP workload” — MCP becomes ordinary HTTP. | **rco8786 · 49400071** (top-level, paraphrases roadmap heading `HTTP-native transport unification and hardening`) | **Partially true, easily overstretched.** The line is real and about *operability* (stateless, horizontal scale, std headers/status codes). It does **not** imply every ordinary HTTP auth scheme is conformant — the Bearer/audience rules above still apply. Footgun 4 tests this. |
 | 2 | The roadmap’s agent-identity paragraph (browser-person → pillar) is quoted verbatim; several replies treat it as the near-term authorization target. | **izend · 49400011** (quotes roadmap’s *Agent identity and enterprise-ready security* paragraph at length) | **Roadmap, not 2026-07-28 core.** The paragraph lists *future* DPoP finalization, WIF/ID-JAG/RFC 8693 — none are in `basic/authorization/index.mdx`. |
 | 3 | “The work here covers finalizing Demonstrating Proof of Possession (DPoP) and driving its adoption…” — DPoP talk triggers the “already standardized” reading. | **izend · 49400011** quoting roadmap; corroborated by `posts/mcp-roadmap` § DPoP bullet | **Roadmap priority.** `finalizing` + `driving adoption` + `Agent Identity WG (forming)` = not yet a 2026-07-28 core `MUST`. |
-| 4 | “It's unreal how bad the initial rollout was between HTTP/streaming and stdio, bearer auth and OAuth. Virtually every client/MCP server pair had a different portion of that matrix implemented.” — bearer vs OAuth fragmentation led to “bearer-only is legacy”. | **colingauvin · 49400633** | **Fragmentation was real, but bearer is still the core.** 2026-07-28 *standardizes* on `Authorization: Bearer` + RFC 8707/9728/9207 — bearer is the stable core, not legacy. |
+| 4 | “It's unreal how bad the initial rollout was between HTTP/streaming and stdio, bearer auth and OAuth. Virtually every client/MCP server pair had a different portion of that matrix implemented.” — fragmentation across the rollout matrix. | **colingauvin · 49400633** (verbatim: HTTP/streaming, stdio, bearer auth, OAuth; inconsistent client/server support) | **Fragmentation was real, but the comment does not state bearer-only is legacy.** 2026-07-28 *standardizes* on `Authorization: Bearer` + RFC 8707/9728/9207 — bearer is the stable core, not legacy. |
 | 5 | Skepticism that workload identity is settled: two sub-threads debate enterprise patterns vs DPoP. | **gz5 · 49400383** (“two streams… RFC 7523/OIDC vs DPoP”) ; **bandofthehawk · 49400223** (“use agentgateway as auth proxy”) | **Both patterns are roadmap work.** The thread itself frames them as alternatives/divergence — consistent with spec gap (no DPoP normative text in 2026-07-28). The claim that 2026-07-28 “standardized” either pattern is not supported. |
-| 6 | Stdio as legacy: some comments read “HTTP-native… unifying on one transport” as stdio deprecation. | **roadmap § HTTP-native transport unification** as cited by `rco8786`; counterpoint is spec line 21 | **Spec contradicts the inference.** `basic/authorization` says stdio `SHOULD NOT` use HTTP auth and `basic/transports/stdio.mdx` fully specifies stdio; the roadmap explicitly wants `HTTP over stdio` (HTTP/2 multiplexing while retaining subprocess guarantees), not removal. |
+| 6 | “Is stdio being deprecated? I couldn't tell from this page” | **ihuman · 49401110** (verbatim question on the roadmap page) | **Directly asked on thread; answer is no on current spec.** `basic/authorization` line 21 says stdio `SHOULD NOT` use HTTP auth and `basic/transports/stdio.mdx` remains fully specified; the roadmap proposes `HTTP over stdio` unification (HTTP/2 multiplexing while retaining subprocess guarantees), not removal. Current stdio support plus the proposed unification does not establish that stdio is deprecated; it also does not prove that stdio's transport shape will remain unchanged indefinitely. |
 
 If a comment you need is missing above, fetch it directly — these are not invented.
 
@@ -102,10 +102,25 @@ python3 -m unittest tests/test_status_boundary.py -v
 - `modelcontextprotocol/modelcontextprotocol` @ `main` — `docs/specification/2026-07-28/basic/authorization/index.mdx` (grep: no `DPoP`), `docs/specification/2026-07-28/basic/transports/stdio.mdx`, `docs/development/roadmap.mdx`
 - RFCs cited by the spec: **RFC 6750** (Bearer), **RFC 8707** (Resource Indicators), **RFC 9449** (DPoP — not referenced by 2026-07-28, roadmap-only)
 
-## Result snapshot (actual, 2026-09-16)
+## Result snapshot (actual, 2026-09-16 — corrected)
+
+Fixture/core-compliance outcome (evaluator `results.json` / `RESULTS.md`):
 
 ```
-8 cases · 8 pass · 0 fail  (see RESULTS.md)
+8 cases · 6 pass · 2 intentional core-rule fail  (see RESULTS.md)
+  pass: http-auth-disabled, valid-bearer-header, valid-without-dpop, ema-stable-extension, dpop-roadmap, stdio-env-creds
+  fail (intentional rejections per 2026-07-28 core rules): token-in-query-string (MUST NOT in query, line 271), wrong-audience (MUST validate audience per RFC 8707, lines 283-285)
+```
+
+Unit-test result (independent oracle, not fixture count):
+
+```
+9 tests OK — python3 -m unittest tests/test_status_boundary.py -v
+```
+
+Status conclusions (unchanged):
+
+```
 DPoP: roadmap priority (not a 2026-07-28 core MUST)
 Agent/workload identity (WIF/ID-JAG/RFC 8693): roadmap priority
 Enterprise-Managed Authorization: stable extension (not 2026-07-28 core)

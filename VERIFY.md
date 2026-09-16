@@ -35,3 +35,17 @@ OK
 ```
 
 GitHub Actions: https://github.com/necat101/hn-mcp-auth-status-boundary-lab/actions/runs/35136301416 — `ci` completed `success` on `9cd072e`.
+
+---
+
+## Second fresh-clone check — documentation revision 58c6d3c
+
+This section records the state after the documentation revision was public.
+It does not re-execute the lab; only HEAD/clone-ancestry checks.
+
+- Public HTTPS origin: https://github.com/necat101/hn-mcp-auth-status-boundary-lab.git
+- Expected published HEAD (documentation revision): 58c6d3c9e0846f1823c12b5ff2761a7b40993f21
+- Fresh clone HEAD (unauthenticated HTTPS, `git clone https://github.com/necat101/hn-mcp-auth-status-boundary-lab.git /tmp/fresh-lab`): 58c6d3c9e0846f1823c12b5ff2761a7b40993f21
+- Equality: MATCH
+- Implementation revision actually execution-tested in a fresh clone: 9cd072e8f6e927a089a77447e08c0770223c05c9 (`python3 evaluator.py` → 8 cases · 6 pass · 2 intentional fail; `python3 -m unittest tests/test_status_boundary.py -v` → 9 tests OK) — see Section 1 transcript above. The documentation commit 58c6d3c itself was not separately execution-tested; only its HEAD/clone presence was verified. GitHub Actions for the new evidence-repair commit will be inspected separately.
+
